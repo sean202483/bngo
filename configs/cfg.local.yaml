@@ -1,0 +1,134 @@
+# 开发环境 configuration file
+
+#是否开启代理
+proxy:
+  enable: true
+  address: "http://127.0.0.1:13690"
+
+#密钥管理
+accessKey:
+  api_key: "dW8vzVDxSsbxDin6zYHraz3jKgZ9Bn0r7F1LMoeWCSKp3fNBWasGVR40p5jzyLaF"
+  secret_key: "msKGpfTxdIVYeShdCU88eCKQ06pNjtvoGYQiLZAHHS60MorNHCFRBQBgSvO6XE45"
+
+diagnosis: # config of pprof and prometheus
+  enable: true
+  port: 7000
+  interval: 30 # 保存cpu和堆配置文件的间隔，单位：秒
+  seconds: 3 # 当设置为30时，查看30秒的CPU配置文件，秒数必须小于间隔
+  outdate: 300 # 单位: 秒, 如果现在modTime>outdate，它将删除配置文件
+  profile_dir: "logs/profile" # 存储cpu和堆配置文件的目录
+
+http_client:
+  common:
+    timeout: 10000 # unit: ms毫秒, 指定此http客户端发出请求的时间限制
+    max_conns_per_host: 2 # 限制每个主机的连接总数
+    max_idle_conns_per_host: 2 # 控制每个主机要保持的最大空闲（保持活动）连接
+    api: "" # http服务器的api地址
+
+binance:
+  adaptive: true # 如果值为false，它将使用文件中设置的主机的值；相反，它将根据网络延迟使用自适应主机
+  host: "api.binance.com" # host of binance
+
+return_rate: # return_rate > min && return_rate < max
+  free0: # return rate for no symbol with free charge
+    min: 1.00054 # min return rate
+    max: 1.00204 # max return rate
+  free1: # return rate for 1 symbol with free charge
+    min: 1.00036
+    max: 1.00186
+  free2: # return rate for 2 symbols with free charge
+    min: 1.00018
+    max: 1.00168
+  free3: # return rate for 3 symbols with free charge
+    min: 1.00000
+    max: 1.00150
+
+interval:
+  best_price_write: 1800000 # unit: ms, 日志文件写入最优惠价格的间隔
+  price_filter_info: 3600 # unit: s
+  listen_key: 1500 # unit: s, 1800 is ok
+  network_delay: 60000 # unit: ms, 更新网络延迟间隔
+  host_and_delay: 60000 # unit: ms, 更新主机的间隔和网络延迟
+  update_order_cnt: 100 # unit: s, 更新订单计数的间隔
+  check_1d_order_cnt: 100 # unit: s, 检查1d订单计数的间隔
+  rebalance: 10 # unit: s, interval of rebalance
+  sync_funding_account: 10 # unit: s, 资金账户信息同步间隔
+  sync_spot_account: 60 # unit: s, 资金账户信息同步间隔
+  sync_best_price: 60000 # unit: ms, 同步最优惠价格间隔
+
+custom:
+  give_up_some: true # if true, it will give up the group whose quantity of s1 is less than s2
+  price_go_up: true # if true, price of s1 will multiple 1.00005
+  sell_s2_at_once: false # if true, sell s2 at once
+  transfer_exit: false # if true, it will exit in case of transfer failure
+  symbol_batch: 400 # subscribe count of symbols in one ws stream
+  used_weight_1m: 1111 # stop to trade if 1m used weight is greater than the threshold, max: 1200
+  order_count_10s: 38 # stop to trade if 10s order count is greater than the threshold, max: 50
+  order_count_1d: 158888 # stop to trade if 1d order count is greater than the threshold, max: 160000
+  buy_bnb: 1000 # unit: ms, interval of buying bnb
+  network_delay: 500 # stop to trade if network delay is greater than the threshold, unit: ms
+  wait_time_next_trade: 500 # unit: ms, wait a moment before next trading
+  subscribe_cnt: 1 # count of websocket subscribe
+  bnb_cnt_buy: 0.018 # buy bnb if count of bnb is less than the threshold
+  bnb_cnt_exit: 0.005 # exit the progress if count of bnb is less than the threshold
+  value_thrd: 13 # skip the trade pairs whose ask or bid value is less than the threshold
+  sub_value: 0 # market value will sub the sub_value
+  quote_value: 1000 # the progress will exit when cummulative quote quantity reaches the value
+
+exit:
+  enable: true # if true, the progress will exit on next day at 07:59
+  left_seconds: 0 # if the value is greater than 0, the progress will exit after LeftSeconds seconds
+
+file: # files to write raw message
+  best_price: # best price logger
+    compress: false # compress or not, false means no compression
+    max_size: 1 # max size of one file, unit: MB
+    max_backups: 5 # max num of backup files
+    max_age: 7 # max time to reserve the log file, unit: day
+    level: "info" # log level
+    filename: "logs/data/best_price.txt" # filename
+  return_rate: # return rate logger
+    compress: false # compress or not, false means no compression
+    max_size: 1 # max size of one file, unit: MB
+    max_backups: 5 # max num of backup files
+    max_age: 7 # max time to reserve the log file, unit: day
+    level: "info" # log level
+    filename: "logs/data/return_rate.txt" # filename
+
+symbol:
+  only_white_list: false # true means only trade the symbol in the white list
+  enable_black_list: true # true means that symbol in the symbol_black_list will not be subscribed
+  price_filter_rate_thrd: 0.0006
+  base_white_list: # base asset white list
+    ["VIDT", "BTC"]
+  symbol_black_list: # symbol black list
+    [
+      # "VIDTBTC",
+      "BTCUSDC",
+    ]
+  symbol_white_list: # symbol white list
+    ["GBPBUSD", "ETHBNB"]
+  symbol_free_charge: # symbol with free charge
+    [
+      "TUSDUSDT",
+      "TUSDBUSD",
+      "BUSDUSDT",
+      "USDCUSDT",
+      "BTCFDUSD",
+      "FDUSDUSDT",
+      "FDUSDBUSD",
+      "USDPUSDT",
+    ]
+  hold_coins: # hold coins with free
+    [
+      "USDT",
+      # "EUR",
+      "TUSD",
+      "BUSD",
+      "BTC",
+      "ETH",
+      "FDUSD",
+      "USDC",
+    ]
+
+symbols: ["BTCBUSD", "BNBBUSD"]
